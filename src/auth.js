@@ -75,15 +75,24 @@ function formatUser(user) {
 }
 
 export async function getUser() {
-  // First, check if we're handling a signin redirect callback (e.g., is ?code=... in URL)
-  if (window.location.search.includes("code=")) {
-    const user = await userManager.signinCallback();
-    // Remove the auth code from the URL without triggering a reload
-    window.history.replaceState({}, document.title, window.location.pathname);
-    return formatUser(user);
-  }
+  try {
+    // First, check if we're handling a signin redirect callback (e.g., is ?code=... in URL)
+    if (window.location.search.includes("code=")) {
+      console.log("Handling signin redirect callback...");
+      const user = await userManager.signinCallback();
+      // Remove the auth code from the URL without triggering a reload
+      window.history.replaceState({}, document.title, window.location.pathname);
+      console.log("User from callback:", user);
+      return formatUser(user);
+    }
 
-  // Otherwise, get the current user
-  const user = await userManager.getUser();
-  return user ? formatUser(user) : null;
+    // Otherwise, get the current user
+    console.log("Getting current user...");
+    const user = await userManager.getUser();
+    console.log("Current user from manager:", user);
+    return user ? formatUser(user) : null;
+  } catch (error) {
+    console.error("Error getting user:", error);
+    return null;
+  }
 }

@@ -1,6 +1,7 @@
 // src/app.js
 
 import { signIn, signOut, simpleSignOut, getUser } from "./auth.js";
+import { getUserFragments } from './api';
 
 async function init() {
   // Get our UI elements
@@ -31,6 +32,11 @@ async function init() {
       signoutBtn.onclick = () => signOut();
       userSection.appendChild(signoutBtn);
     }
+
+    // Do an authenticated request to the fragments API server and log the result
+    const userFragments = await getUserFragments(user);
+
+    // TODO: later in the course, we will show all the user's fragments in the HTML...
   } else {
     // User is not authenticated - show login button
     userSection.hidden = true;
