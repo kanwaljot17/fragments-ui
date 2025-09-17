@@ -1,23 +1,19 @@
 // src/auth.js
-
 import { UserManager } from "oidc-client-ts";
 
 const cognitoAuthConfig = {
-  authority: `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_wEBJivNbO`,
-  client_id: "6fspvdp6egvu25v30f462b2i2k",
-  redirect_uri: "http://localhost:1234",
+  authority: `https://cognito-idp.us-east-1.amazonaws.com/${process.env.AWS_COGNITO_POOL_ID}`,
+  client_id: process.env.AWS_COGNITO_CLIENT_ID,
+  redirect_uri: process.env.OAUTH_SIGN_IN_REDIRECT_URL,
   response_type: "code",
   scope: "openid email profile",
-  // no revoke of "access token" (https://github.com/authts/oidc-client-ts/issues/262)
   revokeTokenTypes: ["refresh_token"],
-  // no silent renew via "prompt=none" (https://github.com/authts/oidc-client-ts/issues/366)
   automaticSilentRenew: false,
 };
 
 // Create a UserManager instance
-const userManager = new UserManager({
-  ...cognitoAuthConfig,
-});
+const userManager = new UserManager(cognitoAuthConfig);
+
 
 export async function signIn() {
   // Trigger a redirect to the Cognito auth page, so user can authenticate

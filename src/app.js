@@ -1,24 +1,25 @@
 // src/app.js
 
 import { signIn, signOut, simpleSignOut, getUser } from "./auth.js";
-import { getUserFragments } from './api';
+import { getUserFragments } from "./api.js";
 
 async function init() {
   // Get our UI elements
   const userSection = document.querySelector("#user");
   const loginBtn = document.querySelector("#login");
 
-  // Wire up event handlers to deal with login and logout.
+  // Wire up event handlers to deal with login and logout
   loginBtn.onclick = () => {
     console.log("Login button clicked!");
-    // Sign-in via the Amazon Cognito Hosted UI (requires redirects), see:
     signIn();
   };
 
-  // See if we're signed in (i.e., we'll have a `user` object)
+  // See if we're signed in
   const user = await getUser();
 
   if (user) {
+    console.log("✅ User object returned from getUser():", user);
+
     // User is authenticated - show user info
     userSection.hidden = false;
     userSection.querySelector(".username").innerText = user.username;
@@ -33,11 +34,30 @@ async function init() {
       userSection.appendChild(signoutBtn);
     }
 
-    // Do an authenticated request to the fragments API server and log the result
-    const userFragments = await getUserFragments(user);
+    // Debug: entering getUserFragments()
+    console.log("➡️ Entering getUserFragments(user)...");
 
-    // TODO: later in the course, we will show all the user's fragments in the HTML...
+    try {
+      const userFragments = await getUserFragments(user);
+      console.log("✅ getUserFragments() returned:", userFragments);
+
+      // Render results in DOM
+      const fragmentsList = document.createElement("ul");
+      if (!userFragments || !userFragments.fragments) {
+        fragmentsList.innerHTML = "<li>⚠️ No fragments returned</li>";
+      } else if (userFragments.fragments.length === 0) {
+        fragmentsList.innerHTML = "<li>No fragments yet...</li>";
+      } else {
+        fragmentsList.innerHTML = userFragments.fragments
+          .map((f) => `<li>${JSON.stringify(f)}</li>`)
+          .join("");
+      }
+      userSection.appendChild(fragmentsList);
+    } catch (err) {
+      console.error("❌ getUserFragments(user) threw an error:", err);
+    }
   } else {
+    console.log("⚠️ No user object returned from getUser()");
     // User is not authenticated - show login button
     userSection.hidden = true;
     loginBtn.disabled = false;
