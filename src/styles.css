@@ -158,17 +158,38 @@ button:disabled {
   margin-top: 20px;
 }
 
+#fragments {
+  list-style: none;
+  padding: 0;
+}
+
+#fragments li {
+  background-color: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+#fragments li:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
 .fragment-item {
   background-color: white;
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 6px;
   border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .fragment-item h5 {
   color: #2c3e50;
   margin-bottom: 8px;
+  font-size: 1.1em;
 }
 
 .fragment-item .fragment-meta {
@@ -185,6 +206,21 @@ button:disabled {
   font-size: 13px;
   white-space: pre-wrap;
   word-break: break-all;
+}
+
+.fragment-item button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.fragment-item button:hover {
+  background-color: #218838;
 }
 
 /* API Status */
