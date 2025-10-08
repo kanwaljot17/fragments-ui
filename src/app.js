@@ -1,34 +1,37 @@
-// src/app.js
+// Main application entry point - handles user interface and fragment management
+// This is where all the magic happens when someone visits our app
 
 import { signIn, signOut, getUser } from "./auth.js";
 import { getUserFragments, createFragment, getFragment } from "./api.js";
 
 console.log("🧭 DOM fully loaded. actionsDiv exists?", document.querySelector("#actions"));
 
-
+// Initialize the app when the page loads
 async function init() {
+  // Grab all the important elements we'll be working with
   const userSection = document.querySelector("#user");
   const loginBtn = document.querySelector("#login");
   const actionsDiv = document.querySelector("#actions");
   const fragmentsList = document.querySelector("#fragments");
 
-  // --- LOGIN HANDLER ---
+  // Set up the login button - when clicked, start the authentication process
   loginBtn.onclick = () => {
     console.log("🔐 Login button clicked");
     signIn();
   };
 
-  // --- CHECK LOGIN STATE ---
+  // Check if someone is already logged in when the page loads
   const user = await getUser();
 
   if (user) {
     console.log("✅ Authenticated user:", user);
 
+    // Great! Someone is logged in, so let's show them the app
     userSection.hidden = false;
     userSection.querySelector(".username").innerText = user.username;
-    loginBtn.disabled = true;
+    loginBtn.disabled = true; // Hide the login button since they're already logged in
 
-    // --- SIGN OUT BUTTON ---
+    // Create a sign out button so users can log out when they're done
     if (!document.querySelector("#signout-btn")) {
       const signoutBtn = document.createElement("button");
       signoutBtn.id = "signout-btn";
@@ -37,7 +40,7 @@ async function init() {
       actionsDiv.appendChild(signoutBtn);
     }
 
-    // --- CREATE FRAGMENT BUTTON ---
+    // Add a button to create new fragments - this is the main feature of our app
     if (!document.querySelector("#create-fragment-btn")) {
       const createBtn = document.createElement("button");
       createBtn.id = "create-fragment-btn";
@@ -46,10 +49,11 @@ async function init() {
       createBtn.onclick = async () => {
         try {
           console.log("📤 Creating new fragment...");
+          // Create a simple text fragment with a default message
           const result = await createFragment(user, "Hello from Fragments UI!");
           console.log("🎯 Fragment created successfully:", result);
 
-          // Refresh the fragments list
+          // After creating, refresh the list so the user can see their new fragment
           await loadFragments();
 
           alert(`✅ Fragment created!\nID: ${result.fragment.id}`);
@@ -61,7 +65,7 @@ async function init() {
       actionsDiv.appendChild(createBtn);
     }
 
-    // --- REFRESH FRAGMENTS BUTTON ---
+    // Add a refresh button so users can reload their fragments if needed
     if (!document.querySelector("#refresh-fragments-btn")) {
       const refreshBtn = document.createElement("button");
       refreshBtn.id = "refresh-fragments-btn";
@@ -81,19 +85,21 @@ async function init() {
 
 
 
-    // --- LOAD FRAGMENTS FUNCTION ---
+    // This function loads all the user's fragments and displays them in a nice list
     async function loadFragments() {
       try {
         console.log("📡 Fetching existing fragments...");
         const userFragments = await getUserFragments(user);
         console.log("✅ Fragments fetched:", userFragments);
 
-        // Clear any old entries
+        // Clear the list first so we don't have duplicates
         fragmentsList.innerHTML = "";
 
+        // If the user doesn't have any fragments yet, show a helpful message
         if (!userFragments?.fragments?.length) {
           fragmentsList.innerHTML = "<li>No fragments yet...</li>";
         } else {
+          // Create a nice card for each fragment with a view button
           fragmentsList.innerHTML = userFragments.fragments
             .map((f) => {
               const fragmentId = typeof f === 'string' ? f : f.id;
@@ -111,17 +117,18 @@ async function init() {
       }
     }
 
-    // --- INITIAL LOAD ---
+    // Load the fragments when the page first loads
     await loadFragments();
 
-    // --- GLOBAL VIEW FRAGMENT FUNCTION ---
+    // This function is called when someone clicks "View Fragment" on any fragment
+    // It fetches the actual content and shows it to the user
     window.viewFragment = async (fragmentId) => {
       try {
         console.log("👁️ Viewing fragment:", fragmentId);
         const fragmentData = await getFragment(user, fragmentId);
         console.log("✅ Fragment data:", fragmentData);
         
-        // Display the fragment content directly
+        // Show the fragment content in a popup - simple but effective
         alert(`🧾 Fragment Data:\n${fragmentData}`);
       } catch (err) {
         console.error("❌ Failed to view fragment:", err);
@@ -129,10 +136,12 @@ async function init() {
       }
     };
   } else {
+    // No one is logged in, so hide the app and show the login button
     console.log("⚠️ No user logged in.");
     userSection.hidden = true;
     loginBtn.disabled = false;
   }
 }
 
+// Start the app as soon as the page finishes loading
 addEventListener("DOMContentLoaded", init);
