@@ -13,7 +13,7 @@
     "API_URL": "http://ec2-54-224-105-205.compute-1.amazonaws.com:8080",
     "AWS_COGNITO_POOL_ID": "us-east-1_wEBJivNbO",
     "AWS_COGNITO_CLIENT_ID": "6fspvdp6egvu25v30f462b2i2k",
-    "OAUTH_SIGN_IN_REDIRECT_URL": "http://localhost:1234"
+    "OAUTH_SIGN_IN_REDIRECT_URL": "http://ec2-54-224-105-205.compute-1.amazonaws.com:1234"
   },
   "repository": {
     "type": "git",
