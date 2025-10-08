@@ -4,7 +4,7 @@
 import { signIn, signOut, getUser } from "./auth.js";
 import { getUserFragments, createFragment, getFragment } from "./api.js";
 
-console.log("🧭 DOM fully loaded. actionsDiv exists?", document.querySelector("#actions"));
+console.log("DOM fully loaded. actionsDiv exists?", document.querySelector("#actions"));
 
 // Initialize the app when the page loads
 async function init() {
@@ -16,7 +16,7 @@ async function init() {
 
   // Set up the login button - when clicked, start the authentication process
   loginBtn.onclick = () => {
-    console.log("🔐 Login button clicked");
+    console.log("Login button clicked");
     signIn();
   };
 
@@ -24,7 +24,7 @@ async function init() {
   const user = await getUser();
 
   if (user) {
-    console.log("✅ Authenticated user:", user);
+    console.log("Authenticated user:", user);
 
     // Great! Someone is logged in, so let's show them the app
     userSection.hidden = false;
@@ -48,18 +48,18 @@ async function init() {
       createBtn.style.marginRight = "10px";
       createBtn.onclick = async () => {
         try {
-          console.log("📤 Creating new fragment...");
+          console.log("Creating new fragment...");
           // Create a simple text fragment with a default message
           const result = await createFragment(user, "Hello from Fragments UI!");
-          console.log("🎯 Fragment created successfully:", result);
+          console.log("Fragment created successfully:", result);
 
           // After creating, refresh the list so the user can see their new fragment
           await loadFragments();
 
-          alert(`✅ Fragment created!\nID: ${result.fragment.id}`);
+          alert(`Fragment created!\nID: ${result.fragment.id}`);
         } catch (err) {
-          console.error("❌ Failed to create fragment:", err);
-          alert("⚠️ Error creating fragment — check console.");
+          console.error("Failed to create fragment:", err);
+          alert("Error creating fragment — check console.");
         }
       };
       actionsDiv.appendChild(createBtn);
@@ -72,12 +72,12 @@ async function init() {
       refreshBtn.textContent = "Refresh Fragments";
       refreshBtn.onclick = async () => {
         try {
-          console.log("🔄 Refreshing fragments...");
+          console.log("Refreshing fragments...");
           await loadFragments();
-          alert("✅ Fragments refreshed!");
+          alert("Fragments refreshed!");
         } catch (err) {
-          console.error("❌ Failed to refresh fragments:", err);
-          alert("⚠️ Error refreshing fragments — check console.");
+          console.error("Failed to refresh fragments:", err);
+          alert("Error refreshing fragments — check console.");
         }
       };
       actionsDiv.appendChild(refreshBtn);
@@ -88,9 +88,9 @@ async function init() {
     // This function loads all the user's fragments and displays them in a nice list
     async function loadFragments() {
       try {
-        console.log("📡 Fetching existing fragments...");
+        console.log("Fetching existing fragments...");
         const userFragments = await getUserFragments(user);
-        console.log("✅ Fragments fetched:", userFragments);
+        console.log("Fragments fetched:", userFragments);
 
         // Clear the list first so we don't have duplicates
         fragmentsList.innerHTML = "";
@@ -112,7 +112,7 @@ async function init() {
             .join("");
         }
       } catch (err) {
-        console.error("❌ Error fetching fragments:", err);
+        console.error("Error fetching fragments:", err);
         fragmentsList.innerHTML = "<li>Error loading fragments</li>";
       }
     }
@@ -124,20 +124,20 @@ async function init() {
     // It fetches the actual content and shows it to the user
     window.viewFragment = async (fragmentId) => {
       try {
-        console.log("👁️ Viewing fragment:", fragmentId);
+        console.log("Viewing fragment:", fragmentId);
         const fragmentData = await getFragment(user, fragmentId);
-        console.log("✅ Fragment data:", fragmentData);
+        console.log("Fragment data:", fragmentData);
         
         // Show the fragment content in a popup - simple but effective
-        alert(`🧾 Fragment Data:\n${fragmentData}`);
+        alert(`Fragment Data:\n${fragmentData}`);
       } catch (err) {
-        console.error("❌ Failed to view fragment:", err);
-        alert("⚠️ Error viewing fragment — check console.");
+        console.error("Failed to view fragment:", err);
+        alert("Error viewing fragment — check console.");
       }
     };
   } else {
     // No one is logged in, so hide the app and show the login button
-    console.log("⚠️ No user logged in.");
+    console.log("No user logged in.");
     userSection.hidden = true;
     loginBtn.disabled = false;
   }

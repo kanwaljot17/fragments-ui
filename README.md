@@ -4,26 +4,26 @@ A modern web application for managing and viewing text fragments with a clean, r
 
 ## Features
 
-- 🔐 **Authentication**: Secure login with user management
-- 📝 **Fragment Management**: Create, view, and manage text fragments
-- 🎨 **Modern UI**: Clean, responsive design with dark theme
-- 🔄 **Real-time Updates**: Dynamic fragment loading and refreshing
-- 📱 **Mobile Friendly**: Responsive design that works on all devices
+- **Authentication**: Secure login with user management
+- **Fragment Management**: Create, view, and manage text fragments
+- **Modern UI**: Clean, responsive design with dark theme
+- **Real-time Updates**: Dynamic fragment loading and refreshing
+- **Mobile Friendly**: Responsive design that works on all devices
 
 ## Recent Improvements
 
-### ✅ Fixed Content-Type Handling
+### Fixed Content-Type Handling
 - **Issue**: Frontend was trying to parse all responses as JSON, causing errors with plain text fragments
 - **Solution**: Implemented smart content-type detection that handles both JSON and plain text responses
 - **Result**: No more "Unexpected token" errors when viewing fragments
 
-### ✅ Enhanced Visual Design
+### Enhanced Visual Design
 - **Dark Theme**: Fragment boxes now use a professional dark blue-grey theme
 - **High Contrast**: Light grey text on dark backgrounds for better readability
 - **Orange Buttons**: Vibrant orange "View Fragment" buttons for better visibility
 - **Hover Effects**: Smooth transitions and shadow effects for better user experience
 
-### ✅ Improved User Experience
+### Improved User Experience
 - **Cache Busting**: Implemented cache-busting to ensure users always see the latest changes
 - **Better Error Handling**: Robust error handling for different content types
 - **Responsive Layout**: Optimized for both desktop and mobile viewing
