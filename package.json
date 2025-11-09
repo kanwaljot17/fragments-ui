@@ -7,13 +7,15 @@
     "dev": "parcel src/index.html --port 1234",
     "start": "parcel src/index.html --port 1234",
     "build": "parcel build src/index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rerun": "node scripts/rerun.js",
+    "clean": "node scripts/clean.js"
   },
   "env": {
-    "API_URL": "http://ec2-54-224-105-205.compute-1.amazonaws.com:8080",
+    "API_URL": "http://3.90.2.171:8080",
     "AWS_COGNITO_POOL_ID": "us-east-1_wEBJivNbO",
     "AWS_COGNITO_CLIENT_ID": "6fspvdp6egvu25v30f462b2i2k",
-    "OAUTH_SIGN_IN_REDIRECT_URL": "http://ec2-54-224-105-205.compute-1.amazonaws.com:1234"
+    "OAUTH_SIGN_IN_REDIRECT_URL": "http://localhost:1234"
   },
   "repository": {
     "type": "git",

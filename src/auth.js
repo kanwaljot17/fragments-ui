@@ -43,8 +43,8 @@ export async function signOut() {
   sessionStorage.clear();
 
   // Send them back to the home page
-  window.location.href =
-    "http://ec2-54-224-105-205.compute-1.amazonaws.com:1234";
+  const redirectUrl = process.env.OAUTH_SIGN_IN_REDIRECT_URL || window.location.origin;
+  window.location.href = redirectUrl;
 }
 
 // A simpler logout method that just clears local data
@@ -52,8 +52,8 @@ export async function simpleSignOut() {
   console.log("Simple sign out - clearing local data");
   localStorage.clear();
   sessionStorage.clear();
-  window.location.href =
-    "http://ec2-54-224-105-205.compute-1.amazonaws.com:1234";
+  const redirectUrl = process.env.OAUTH_SIGN_IN_REDIRECT_URL || window.location.origin;
+  window.location.href = redirectUrl;
 }
 
 // Takes the complex user object from Cognito and makes it simple to use

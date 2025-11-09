@@ -1,5 +1,5 @@
-// Configuration for our API - defaults to localhost but can be overridden
-const apiUrl = process.env.API_URL || "http://localhost:8080";
+// Configuration for our API - EC2 instance
+const apiUrl = "http://3.90.2.171:8080";
 
 /**
  * Fetches all fragments belonging to a specific user
@@ -12,8 +12,9 @@ export async function getUserFragments(user) {
   console.log("User ID Token present?", !!user?.idToken);
 
   try {
-    // Build the URL to get all fragments for this user
+    // Build the URL to get all fragments for this user with expanded metadata
     const fragmentsUrl = new URL("/v1/fragments", apiUrl);
+    fragmentsUrl.searchParams.set("expand", "1");
     console.log("Full fetch URL:", fragmentsUrl.toString());
 
     // Get the authentication headers from the user object
@@ -44,26 +45,43 @@ export async function getUserFragments(user) {
 }
 
 /**
- * Creates a new text fragment for the authenticated user
- * This is what gets called when someone clicks "Create Fragment"
+ * Creates a new fragment for the authenticated user
+ * @param {Object} user - Authenticated user object
+ * @param {string} content - Fragment content
+ * @param {string} contentType - Content type (e.g., 'text/plain', 'text/markdown', 'application/json')
+ * @returns {Promise<Object>} Created fragment data
  */
-export async function createFragment(user, content = "Hello from Fragments UI!") {
+export async function createFragment(user, content, contentType = "text/plain") {
   // Build the URL for creating fragments
   const fragmentsUrl = new URL("/v1/fragments", apiUrl);
+  
+  // Prepare body based on content type
+  let body;
+  if (contentType === "application/json") {
+    // If content is already a string, try to parse it; otherwise use as-is
+    try {
+      body = typeof content === "string" ? content : JSON.stringify(content);
+    } catch (e) {
+      body = JSON.stringify(content);
+    }
+  } else {
+    body = content;
+  }
+  
   const headers = {
-    "Content-Type": "text/plain", // Tell the server we're sending plain text
-    ...user.authorizationHeaders(), // Include the user's authentication
+    ...user.authorizationHeaders(contentType), // Include the user's authentication with correct Content-Type
   };
 
   console.log("POST →", fragmentsUrl.toString());
   console.log("Headers:", headers);
-  console.log("Body content:", content);
+  console.log("Body content:", body);
+  console.log("Content-Type:", contentType);
 
   // Send the fragment content to the server
   const res = await fetch(fragmentsUrl, {
     method: "POST",
     headers,
-    body: content, // The actual text content of the fragment
+    body: body,
   });
 
   console.log("Response status:", res.status, res.statusText);

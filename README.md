@@ -46,7 +46,7 @@ A modern web application for managing and viewing text fragments with a clean, r
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/kanwaljot17/fragments-ui.git
 cd fragments-ui
 ```
 
@@ -55,12 +55,28 @@ cd fragments-ui
 npm install
 ```
 
-3. Start the development server:
+3. **Set up environment variables** (Required):
+   
+   Create a `.env` file in the project root with the following variables:
+   ```
+   API_URL=http://ec2-54-224-105-205.compute-1.amazonaws.com:8080
+   AWS_COGNITO_POOL_ID=us-east-1_wEBJivNbO
+   AWS_COGNITO_CLIENT_ID=6fspvdp6egvu25v30f462b2i2k
+   OAUTH_SIGN_IN_REDIRECT_URL=http://localhost:1234
+   ```
+   
+   **Note:** For local development, use `http://localhost:1234` as the redirect URL. For production, update it to your production URL.
+
+4. Start the development server:
 ```bash
 npm start
 ```
 
-4. Open your browser and navigate to `http://localhost:1234`
+5. Open your browser and navigate to `http://localhost:1234`
+
+### macOS Users
+
+For detailed macOS setup instructions, see [SETUP_MACOS.md](./SETUP_MACOS.md)
 
 ### Building for Production
 
@@ -113,7 +129,17 @@ src/
 
 1. **"Unexpected token" errors**: This was fixed in the latest version with smart content-type detection
 2. **Grey text visibility**: Resolved with dark theme and high contrast colors
-3. **Cache issues**: Use hard refresh (`Ctrl + Shift + R`) or incognito mode
+3. **Cache issues**: Use hard refresh (`Ctrl + Shift + R` on Windows/Linux, `Cmd + Shift + R` on macOS) or incognito mode
+4. **Environment variables not working**: 
+   - Make sure `.env` file exists in the project root
+   - Restart the development server after creating/modifying `.env`
+   - Check that variable names match exactly (case-sensitive)
+5. **Port already in use**: 
+   - Kill the process using port 1234, or
+   - Change the port in `package.json` scripts
+6. **Module not found errors**: 
+   - Delete `node_modules` and `package-lock.json`
+   - Run `npm install` again
 
 ### Browser Compatibility
 - Chrome/Edge (recommended)

@@ -5,9 +5,30 @@
     <title>Fragments UI</title>
     <link rel="stylesheet" href="https://unpkg.com/bamboo.css" />
     <style>
+      body {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333 !important;
+        background-color: #fff !important;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        color: #2c3e50 !important;
+      }
+      
+      p, span, div, li {
+        color: #333 !important;
+      }
+      
+      section {
+        color: #333 !important;
+      }
+      
       #actions {
         margin: 20px 0;
       }
+      
       #actions button {
         margin-right: 10px;
         padding: 8px 16px;
@@ -17,40 +38,109 @@
         border-radius: 4px;
         cursor: pointer;
       }
+      
       #actions button:hover {
         background-color: #0056b3;
       }
+      
+      #create-fragment-form {
+        background: #f8f9fa;
+        padding: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+      
+      #create-fragment-form h4 {
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+      
+      #create-fragment-form label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      
+      #fragment-type {
+        margin-left: 10px;
+        padding: 4px 8px;
+      }
+      
+      #fragment-content {
+        width: 100%;
+        margin-top: 5px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        font-family: monospace;
+        font-size: 14px;
+      }
+      
+      #create-fragment-btn {
+        padding: 8px 16px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      
+      #create-fragment-btn:hover {
+        background-color: #218838;
+      }
+      
       #fragments {
         list-style: none;
         padding: 0;
       }
+      
       #fragments li {
-        background-color: #2c3e50;
+        background: #f8f9fa;
         padding: 15px;
         margin-bottom: 10px;
-        border-radius: 6px;
-        border: 1px solid #34495e;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.3s ease;
-        color: #ecf0f1;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        color: #333 !important;
       }
-      #fragments li:hover {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      
+      #fragments li * {
+        color: #333 !important;
       }
+      
+      .fragment-meta {
+        margin: 10px 0;
+        font-size: 0.9em;
+        color: #666 !important;
+      }
+      
+      .fragment-meta div {
+        margin: 5px 0;
+        color: #666 !important;
+      }
+      
+      .username {
+        color: #2c3e50 !important;
+      }
+      
       #fragments button {
-        background-color: #ff6b35;
+        background-color: #dc3545;
         color: white;
         border: none;
         padding: 8px 16px;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
         margin-top: 10px;
       }
+      
       #fragments button:hover {
-        background-color: #e55a2b;
+        background-color: #c82333;
+      }
+      
+      .empty-state {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        font-style: italic;
       }
     </style>
   </head>

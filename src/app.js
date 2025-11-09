@@ -40,29 +40,58 @@ async function init() {
       actionsDiv.appendChild(signoutBtn);
     }
 
-    // Add a button to create new fragments - this is the main feature of our app
-    if (!document.querySelector("#create-fragment-btn")) {
-      const createBtn = document.createElement("button");
-      createBtn.id = "create-fragment-btn";
-      createBtn.textContent = "Create Fragment";
-      createBtn.style.marginRight = "10px";
+    // Add a form to create new fragments with type selection
+    if (!document.querySelector("#create-fragment-form")) {
+      const form = document.createElement("div");
+      form.id = "create-fragment-form";
+      form.innerHTML = `
+        <h4>Create New Fragment</h4>
+        <label>
+          Content Type:
+          <select id="fragment-type">
+            <option value="text/plain">text/plain</option>
+            <option value="text/markdown">text/markdown</option>
+            <option value="text/html">text/html</option>
+            <option value="application/json">application/json</option>
+          </select>
+        </label>
+        <label>
+          Content:
+          <textarea id="fragment-content" rows="6" placeholder="Enter fragment content here..."></textarea>
+        </label>
+        <button id="create-fragment-btn">Create Fragment</button>
+      `;
+      actionsDiv.appendChild(form);
+
+      const createBtn = form.querySelector("#create-fragment-btn");
       createBtn.onclick = async () => {
         try {
-          console.log("Creating new fragment...");
-          // Create a simple text fragment with a default message
-          const result = await createFragment(user, "Hello from Fragments UI!");
+          const contentType = form.querySelector("#fragment-type").value;
+          const content = form.querySelector("#fragment-content").value;
+          
+          if (!content.trim()) {
+            alert("Please enter some content for the fragment.");
+            return;
+          }
+
+          console.log("Creating new fragment...", { contentType, content });
+          
+          // Create fragment with selected type
+          const result = await createFragment(user, content, contentType);
           console.log("Fragment created successfully:", result);
 
+          // Clear the form
+          form.querySelector("#fragment-content").value = "";
+          
           // After creating, refresh the list so the user can see their new fragment
           await loadFragments();
 
-          alert(`Fragment created!\nID: ${result.fragment.id}`);
+          alert(`Fragment created!\nID: ${result.fragment.id}\nType: ${result.fragment.type}\nSize: ${result.fragment.size} bytes`);
         } catch (err) {
           console.error("Failed to create fragment:", err);
           alert("Error creating fragment — check console.");
         }
       };
-      actionsDiv.appendChild(createBtn);
     }
 
     // Add a refresh button so users can reload their fragments if needed
@@ -97,16 +126,32 @@ async function init() {
 
         // If the user doesn't have any fragments yet, show a helpful message
         if (!userFragments?.fragments?.length) {
-          fragmentsList.innerHTML = "<li>No fragments yet...</li>";
+          fragmentsList.innerHTML = '<li class="empty-state">No fragments yet. Create your first fragment above!</li>';
         } else {
-          // Create a nice card for each fragment with a view button
+          // Create a basic card for each fragment with metadata only
           fragmentsList.innerHTML = userFragments.fragments
             .map((f) => {
-              const fragmentId = typeof f === 'string' ? f : f.id;
+              // Handle both expanded (object) and non-expanded (string ID) formats
+              const fragment = typeof f === 'string' ? { id: f } : f;
+              const fragmentId = fragment.id;
+              
+              // Display metadata if available (expanded format)
+              let metadataHtml = '';
+              if (typeof f === 'object' && f.id) {
+                metadataHtml = `
+                  <div class="fragment-meta">
+                    <div><strong>Type:</strong> ${f.type || 'N/A'}</div>
+                    <div><strong>Size:</strong> ${f.size || 0} bytes</div>
+                    <div><strong>Created:</strong> ${f.created ? new Date(f.created).toLocaleString() : 'N/A'}</div>
+                    <div><strong>Updated:</strong> ${f.updated ? new Date(f.updated).toLocaleString() : 'N/A'}</div>
+                  </div>
+                `;
+              }
+              
               return `<li class="fragment-item">
                 <h5>Fragment ID: ${fragmentId}</h5>
-                <div class="fragment-meta">Click View to see content</div>
-                <button onclick="viewFragment('${fragmentId}')" style="margin-top: 10px;">View Fragment</button>
+                ${metadataHtml}
+                <button onclick="viewFragment('${fragmentId}')">View Fragment</button>
               </li>`;
             })
             .join("");
@@ -128,8 +173,18 @@ async function init() {
         const fragmentData = await getFragment(user, fragmentId);
         console.log("Fragment data:", fragmentData);
         
+        // Format the data for display
+        let displayText = '';
+        if (typeof fragmentData === 'object') {
+          // JSON - pretty print it
+          displayText = JSON.stringify(fragmentData, null, 2);
+        } else {
+          // Plain text or other
+          displayText = String(fragmentData);
+        }
+        
         // Show the fragment content in a popup - simple but effective
-        alert(`Fragment Data:\n${fragmentData}`);
+        alert(`Fragment Data:\n${displayText}`);
       } catch (err) {
         console.error("Failed to view fragment:", err);
         alert("Error viewing fragment — check console.");
