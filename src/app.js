@@ -220,20 +220,33 @@ async function init() {
               const fragmentType = f.type || '';
               let conversionOptions = '';
               
-              if (fragmentType === 'text/markdown') {
-                conversionOptions = '<option value="html">HTML</option><option value="txt">Plain Text</option>';
-              } else if (fragmentType === 'text/html') {
-                conversionOptions = '<option value="txt">Plain Text</option>';
-              } else if (fragmentType === 'application/json') {
-                conversionOptions = '<option value="txt">Plain Text</option>';
-              } else if (fragmentType === 'image/png') {
-                conversionOptions = '<option value="jpg">JPEG</option><option value="webp">WebP</option><option value="avif">AVIF</option>';
+              // Text/plain conversions: markdown, html, json
+              if (fragmentType === 'text/plain') {
+                conversionOptions = '<option value="md">Markdown</option><option value="html">HTML</option><option value="json">JSON</option>';
+              } 
+              // Text/markdown conversions: plain text, html
+              else if (fragmentType === 'text/markdown') {
+                conversionOptions = '<option value="txt">Plain Text</option><option value="html">HTML</option>';
+              } 
+              // Text/html conversions: plain text, markdown
+              else if (fragmentType === 'text/html') {
+                conversionOptions = '<option value="txt">Plain Text</option><option value="md">Markdown</option>';
+              } 
+              // Application/json conversions: plain text, markdown, html
+              else if (fragmentType === 'application/json') {
+                conversionOptions = '<option value="txt">Plain Text</option><option value="md">Markdown</option><option value="html">HTML</option>';
+              } 
+              // Image conversions
+              else if (fragmentType === 'image/png') {
+                conversionOptions = '<option value="jpg">JPEG</option><option value="webp">WebP</option><option value="avif">AVIF</option><option value="gif">GIF</option>';
               } else if (fragmentType === 'image/jpeg' || fragmentType === 'image/jpg') {
-                conversionOptions = '<option value="png">PNG</option><option value="webp">WebP</option><option value="avif">AVIF</option>';
+                conversionOptions = '<option value="png">PNG</option><option value="webp">WebP</option><option value="avif">AVIF</option><option value="gif">GIF</option>';
               } else if (fragmentType === 'image/webp') {
-                conversionOptions = '<option value="png">PNG</option><option value="jpg">JPEG</option><option value="avif">AVIF</option>';
+                conversionOptions = '<option value="png">PNG</option><option value="jpg">JPEG</option><option value="avif">AVIF</option><option value="gif">GIF</option>';
               } else if (fragmentType === 'image/avif') {
-                conversionOptions = '<option value="png">PNG</option><option value="jpg">JPEG</option><option value="webp">WebP</option>';
+                conversionOptions = '<option value="png">PNG</option><option value="jpg">JPEG</option><option value="webp">WebP</option><option value="gif">GIF</option>';
+              } else if (fragmentType === 'image/gif') {
+                conversionOptions = '<option value="png">PNG</option><option value="jpg">JPEG</option><option value="webp">WebP</option><option value="avif">AVIF</option>';
               }
               
               return `<li class="fragment-item" data-fragment-id="${fragmentId}" data-fragment-type="${fragmentType}">
