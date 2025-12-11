@@ -1,5 +1,5 @@
-// Configuration for our API - EC2 instance
-const apiUrl = "http://3.90.2.171:8080";
+// Configuration for our API - ECS Load Balancer
+const apiUrl = "http://fragments-lb-551416766.us-east-1.elb.amazonaws.com";
 
 /**
  * Fetches all fragments belonging to a specific user
@@ -47,8 +47,8 @@ export async function getUserFragments(user) {
 /**
  * Creates a new fragment for the authenticated user
  * @param {Object} user - Authenticated user object
- * @param {string} content - Fragment content
- * @param {string} contentType - Content type (e.g., 'text/plain', 'text/markdown', 'application/json')
+ * @param {string|ArrayBuffer} content - Fragment content (string for text, ArrayBuffer for images)
+ * @param {string} contentType - Content type (e.g., 'text/plain', 'text/markdown', 'application/json', 'image/png', etc.)
  * @returns {Promise<Object>} Created fragment data
  */
 export async function createFragment(user, content, contentType = "text/plain") {
@@ -64,7 +64,11 @@ export async function createFragment(user, content, contentType = "text/plain") 
     } catch (e) {
       body = JSON.stringify(content);
     }
+  } else if (contentType.startsWith("image/")) {
+    // For images, content should be ArrayBuffer
+    body = content instanceof ArrayBuffer ? content : content;
   } else {
+    // For text content, use as string
     body = content;
   }
   
@@ -74,8 +78,9 @@ export async function createFragment(user, content, contentType = "text/plain") 
 
   console.log("POST →", fragmentsUrl.toString());
   console.log("Headers:", headers);
-  console.log("Body content:", body);
   console.log("Content-Type:", contentType);
+  console.log("Body type:", content instanceof ArrayBuffer ? "ArrayBuffer" : typeof content);
+  console.log("Body size:", content instanceof ArrayBuffer ? content.byteLength : content.length);
 
   // Send the fragment content to the server
   const res = await fetch(fragmentsUrl, {
@@ -101,7 +106,7 @@ export async function createFragment(user, content, contentType = "text/plain") 
 }
 /**
  * Gets a specific fragment by its ID and returns the content
- * This is the smart function that handles both JSON and plain text responses
+ * This is the smart function that handles JSON, plain text, and image responses
  */
 export async function getFragment(user, fragmentId) {
   console.log("Getting fragment:", fragmentId);
@@ -125,6 +130,15 @@ export async function getFragment(user, fragmentId) {
       throw new Error(`${res.status} ${res.statusText}: ${errorText}`);
     }
 
+    // Check if it's an image (binary data)
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.startsWith("image/")) {
+      // Return as Blob for images
+      const blob = await res.blob();
+      console.log("Got image blob:", blob.type, blob.size);
+      return { type: 'image', blob: blob, contentType: contentType };
+    }
+
     // This is the smart part - we get the response as text first
     // This way we can handle both JSON and plain text fragments
     const textData = await res.text();
@@ -146,6 +160,143 @@ export async function getFragment(user, fragmentId) {
   } catch (err) {
     console.error("Fetch to /v1/fragments/:id failed:", err);
     throw err;
+  }
+}
+
+/**
+ * Updates an existing fragment for the authenticated user
+ * @param {Object} user - Authenticated user object
+ * @param {string} fragmentId - Fragment ID to update
+ * @param {string} content - New fragment content
+ * @param {string} contentType - Content type (must match existing fragment type)
+ * @returns {Promise<Object>} Updated fragment data
+ */
+export async function updateFragment(user, fragmentId, content, contentType) {
+  console.log("Updating fragment:", fragmentId);
+  
+  // Build the URL for updating the fragment
+  const fragmentUrl = new URL(`/v1/fragments/${fragmentId}`, apiUrl);
+  
+  // Prepare body based on content type
+  let body;
+  if (contentType === "application/json") {
+    try {
+      body = typeof content === "string" ? content : JSON.stringify(content);
+    } catch (e) {
+      body = JSON.stringify(content);
+    }
+  } else {
+    body = content;
+  }
+  
+  const headers = {
+    ...user.authorizationHeaders(contentType),
+  };
+
+  console.log("PUT →", fragmentUrl.toString());
+  console.log("Headers:", headers);
+  console.log("Body content:", body);
+  console.log("Content-Type:", contentType);
+
+  // Send the update request
+  const res = await fetch(fragmentUrl, {
+    method: "PUT",
+    headers,
+    body: body,
+  });
+
+  console.log("Response status:", res.status, res.statusText);
+  console.log("Response headers:", [...res.headers.entries()]);
+
+  // Check if the update was successful
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Error response body:", errorText);
+    throw new Error(`${res.status} ${res.statusText}: ${errorText}`);
+  }
+
+  // Parse the response to get the updated fragment details
+  const data = await res.json();
+  console.log("Updated fragment:", data);
+  return data;
+}
+
+/**
+ * Deletes a fragment for the authenticated user
+ * @param {Object} user - Authenticated user object
+ * @param {string} fragmentId - Fragment ID to delete
+ * @returns {Promise<void>}
+ */
+export async function deleteFragment(user, fragmentId) {
+  console.log("Deleting fragment:", fragmentId);
+  
+  // Build the URL for deleting the fragment
+  const fragmentUrl = new URL(`/v1/fragments/${fragmentId}`, apiUrl);
+  const headers = user.authorizationHeaders();
+
+  console.log("DELETE →", fragmentUrl.toString());
+  console.log("Headers:", headers);
+
+  // Send the delete request
+  const res = await fetch(fragmentUrl, {
+    method: "DELETE",
+    headers,
+  });
+
+  console.log("Response status:", res.status, res.statusText);
+
+  // Check if the deletion was successful
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Error response body:", errorText);
+    throw new Error(`${res.status} ${res.statusText}: ${errorText}`);
+  }
+
+  // DELETE returns 200 with JSON response
+  const data = await res.json();
+  console.log("Deleted fragment:", data);
+  return data;
+}
+
+/**
+ * Gets a fragment converted to a different type
+ * @param {Object} user - Authenticated user object
+ * @param {string} fragmentId - Fragment ID
+ * @param {string} extension - File extension (e.g., 'html', 'txt', 'jpg', 'png')
+ * @returns {Promise<string|Blob>} Converted fragment data
+ */
+export async function getFragmentAsType(user, fragmentId, extension) {
+  console.log("Getting fragment as type:", fragmentId, extension);
+  
+  // Build the URL with extension for conversion
+  const fragmentUrl = new URL(`/v1/fragments/${fragmentId}.${extension}`, apiUrl);
+  const headers = user.authorizationHeaders();
+
+  console.log("GET →", fragmentUrl.toString());
+  console.log("Headers:", headers);
+
+  // Make the request
+  const res = await fetch(fragmentUrl, { headers });
+
+  console.log("Response status:", res.status, res.statusText);
+  console.log("Response headers:", [...res.headers.entries()]);
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`${res.status} ${res.statusText}: ${errorText}`);
+  }
+
+  // Check if it's an image (binary data)
+  const contentType = res.headers.get("content-type") || "";
+  if (contentType.startsWith("image/")) {
+      // Return as Blob for images
+      const blob = await res.blob();
+      return blob;
+  } else {
+    // Return as text for text-based conversions
+    const textData = await res.text();
+    console.log("Got converted text:", textData);
+    return textData;
   }
 }
 

@@ -2,170 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Fragments UI</title>
-    <link rel="stylesheet" href="https://unpkg.com/bamboo.css" />
-    <style>
-      body {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 20px;
-        color: #333 !important;
-        background-color: #fff !important;
-      }
-      
-      h1, h2, h3, h4, h5, h6 {
-        color: #2c3e50 !important;
-      }
-      
-      p, span, div, li {
-        color: #333 !important;
-      }
-      
-      section {
-        color: #333 !important;
-      }
-      
-      #actions {
-        margin: 20px 0;
-      }
-      
-      #actions button {
-        margin-right: 10px;
-        padding: 8px 16px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      
-      #actions button:hover {
-        background-color: #0056b3;
-      }
-      
-      #create-fragment-form {
-        background: #f8f9fa;
-        padding: 15px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        margin-bottom: 20px;
-      }
-      
-      #create-fragment-form h4 {
-        margin-top: 0;
-        margin-bottom: 15px;
-      }
-      
-      #create-fragment-form label {
-        display: block;
-        margin-bottom: 10px;
-      }
-      
-      #fragment-type {
-        margin-left: 10px;
-        padding: 4px 8px;
-      }
-      
-      #fragment-content {
-        width: 100%;
-        margin-top: 5px;
-        padding: 8px;
-        border: 1px solid #ccc;
-        font-family: monospace;
-        font-size: 14px;
-      }
-      
-      #create-fragment-btn {
-        padding: 8px 16px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 10px;
-      }
-      
-      #create-fragment-btn:hover {
-        background-color: #218838;
-      }
-      
-      #fragments {
-        list-style: none;
-        padding: 0;
-      }
-      
-      #fragments li {
-        background: #f8f9fa;
-        padding: 15px;
-        margin-bottom: 10px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        color: #333 !important;
-      }
-      
-      #fragments li * {
-        color: #333 !important;
-      }
-      
-      .fragment-meta {
-        margin: 10px 0;
-        font-size: 0.9em;
-        color: #666 !important;
-      }
-      
-      .fragment-meta div {
-        margin: 5px 0;
-        color: #666 !important;
-      }
-      
-      .username {
-        color: #2c3e50 !important;
-      }
-      
-      #fragments button {
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 10px;
-      }
-      
-      #fragments button:hover {
-        background-color: #c82333;
-      }
-      
-      .empty-state {
-        text-align: center;
-        padding: 20px;
-        color: #666;
-        font-style: italic;
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fragments UI - Modern Fragment Management</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Fragments UI</h1>
+    <div class="container">
+      <header>
+        <h1>Fragments UI</h1>
+        <p>Modern Fragment Management System</p>
+      </header>
 
-    <section>
-      <nav>
-        <button id="login">Login</button>
-      </nav>
-    </section>
+      <section>
+        <nav>
+          <button id="login">Sign In</button>
+        </nav>
+      </section>
 
-    <section hidden id="user">
-      <h2>Hello <span class="username"></span>!</h2>
+      <section hidden id="user">
+        <h2>Welcome back, <span class="username"></span>! 👋</h2>
 
-      <!-- This is where buttons will appear -->
-      <div id="actions"></div>
+        <!-- This is where buttons will appear -->
+        <div id="actions"></div>
 
-      <h3>Your Fragments</h3>
-      <div id="fragments-container">
-        <ul id="fragments"></ul>
-      </div>
-    </section>
+        <h3>Your Fragments</h3>
+        <div id="fragments-container">
+          <ul id="fragments"></ul>
+        </div>
+      </section>
+    </div>
 
-    <!-- Moved here -->
     <script type="module" src="app.js"></script>
   </body>
 </html>

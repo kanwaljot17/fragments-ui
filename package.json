@@ -4,15 +4,19 @@
   "version": "0.0.1",
   "description": "Fragments UI testing web app",
   "scripts": {
+    "clean:cache": "rm -rf .parcel-cache dist node_modules/.cache 2>/dev/null || true",
+    "predev": "npm run clean:cache",
     "dev": "parcel src/index.html --port 1234",
+    "prestart": "npm run clean:cache",
     "start": "parcel src/index.html --port 1234",
+    "prebuild": "npm run clean:cache",
     "build": "parcel build src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
     "rerun": "node scripts/rerun.js",
     "clean": "node scripts/clean.js"
   },
   "env": {
-    "API_URL": "http://3.90.2.171:8080",
+    "API_URL": "http://fragments-lb-551416766.us-east-1.elb.amazonaws.com",
     "AWS_COGNITO_POOL_ID": "us-east-1_wEBJivNbO",
     "AWS_COGNITO_CLIENT_ID": "6fspvdp6egvu25v30f462b2i2k",
     "OAUTH_SIGN_IN_REDIRECT_URL": "http://localhost:1234"
